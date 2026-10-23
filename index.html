@@ -265,6 +265,56 @@
   .advice.bad{border-color:#7a3232;background:rgba(248,113,113,.07);}
   .advice.bad .t{color:var(--red);}
 
+  /* ---------- Kelly staking ---------- */
+  .kelly-inputs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+  .kelly-field{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+  .kelly-field label{display:block;font-size:11.5px;color:var(--ink-muted);margin-bottom:5px;font-weight:600;}
+  .kelly-field input,.kelly-field select{    width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;
+    color:var(--ink);font-family:inherit;font-size:14px;font-weight:700;padding:7px 9px;
+    font-variant-numeric:tabular-nums;
+  }
+  .kelly-field input:focus,.kelly-field select:focus{outline:none;border-color:var(--brand);}
+  .kelly-formula{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;color:var(--gold-2);
+    background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:9px 12px;
+    margin:0 0 12px;line-height:1.75;
+  }
+  table.kelly{width:100%;border-collapse:collapse;font-size:13px;min-width:680px;}
+  table.kelly th,table.kelly td{padding:8px 7px;border-bottom:1px solid var(--line-soft);text-align:right;white-space:nowrap;}
+  table.kelly th:first-child,table.kelly td:first-child{text-align:left;}
+  table.kelly th{font-size:11px;color:var(--ink-muted);font-weight:600;letter-spacing:.3px;}
+  table.kelly td.num{font-variant-numeric:tabular-nums;font-weight:700;}
+  .kelly-zero{color:var(--ink-faint);}
+  .kelly-badge{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:999px;}
+  .kelly-badge.nobet{background:rgba(248,113,113,.12);color:var(--red);border:1px solid #7a3232;}
+  .kelly-badge.bet{background:rgba(74,222,128,.12);color:var(--green);border:1px solid #2f6b4c;}
+  .kelly-badge.capped{background:rgba(224,163,60,.14);color:var(--warn);border:1px solid #7a5a22;}
+  .kelly-cap-note{font-size:11px;color:var(--warn);margin-top:5px;}
+  .kelly-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 4px;}
+  .kelly-summary .kx{background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:11px 13px;}
+  .kelly-summary .kx .k{font-size:11px;color:var(--ink-muted);margin-bottom:3px;}
+  .kelly-summary .kx .v{font-size:20px;font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums;line-height:1.2;}
+  .kelly-summary .kx .s{font-size:10.5px;color:var(--ink-faint);margin-top:3px;line-height:1.4;}
+  .kelly-advice{margin-top:0;}
+  .kelly-advice ul{margin:6px 0 0;padding-left:18px;}
+  .kelly-advice li{margin-bottom:4px;}
+  @media(max-width:820px){.kelly-inputs{grid-template-columns:1fr 1fr;}.kelly-summary{grid-template-columns:1fr 1fr;}}
+  @media(max-width:520px){.kelly-inputs{grid-template-columns:1fr;}}
+
+  /* ---- 牌靴設定列（v5） ---- */
+  .cfg-bar{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px;}
+  .cfg-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+  .cfg-field label{display:block;font-size:11.5px;color:var(--ink-muted);margin-bottom:5px;font-weight:600;letter-spacing:.2px;}
+  .cfg-field select,.cfg-field input{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:700;font-family:inherit;font-variant-numeric:tabular-nums;text-overflow:ellipsis;}
+  .cfg-field select:focus,.cfg-field input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(52,211,153,.12);}
+  .cfg-field[hidden]{display:none;}
+  .cfg-note{font-size:11.5px;color:var(--ink-faint);margin-top:10px;line-height:1.6;}
+  .cfg-note b{color:var(--brand);font-weight:800;}
+  .cfg-warn{color:var(--warn);}
+  .deck-tag{font-size:9.5px;padding:1px 7px;}
+  @media(max-width:820px){.cfg-fields{grid-template-columns:1fr 1fr;}}
+  @media(max-width:520px){.cfg-fields{grid-template-columns:1fr;}}
+
   /* ---------- Disclaimer ---------- */
   .disclaimer{
     margin-top:6px;border:1px solid #6b5a2a;border-radius:16px;padding:16px 18px;
@@ -347,24 +397,50 @@
   <header class="hero">
     <span class="eyebrow">● 數學期望值 · 牌路記錄 · 剩餘牌組推算</span>
     <h1>百家樂算牌輔助系統</h1>
-    <div class="sub">依發牌順序點選牌面，即時推算剩餘牌組、莊／閒／和／對子機率與期望值，並自動生成大路與下三路。</div>
+    <div class="sub">依發牌順序點選牌面，即時推算剩餘牌組、莊／閒／和／對子機率與期望值，並自動生成大路與下三路；內建凱利公式注碼試算（僅數學演示）。</div>
   </header>
 
   <!-- ============ 主工具卡 ============ -->
   <section class="card">
     <div class="toolbar">
-      <div class="tool-title">百家樂算牌輔助 <span class="ver">8 副牌 · 416 張</span></div>
+      <div class="tool-title">百家樂算牌輔助 <span class="ver" id="ver-badge">8 副牌 · 416 張</span></div>
       <div style="display:flex;gap:8px;align-items:center;">
         <button class="btn-ghost btn-sm" id="btn-undo">↶ 復原</button>
         <button class="btn-danger btn-sm" id="btn-reset">新牌靴</button>
       </div>
     </div>
 
+    <!-- 牌靴設定（v5）：副數與莊贏抽水，變更後所有機率／期望值／凱利即時重算 -->
+    <div class="cfg-bar">
+      <div class="cfg-fields">
+        <div class="cfg-field">
+          <label>牌靴副數</label>
+          <select id="cfg-decks">
+            <option value="8" selected>8 副牌（416 張）</option>
+            <option value="6">6 副牌（312 張）</option>
+          </select>
+        </div>
+        <div class="cfg-field">
+          <label>莊贏抽水比例</label>
+          <select id="cfg-commission">
+            <option value="5" selected>5% 標準抽水（實付 0.95）</option>
+            <option value="0">免佣 0%（莊 6 點賠半）</option>
+            <option value="custom">自訂…</option>
+          </select>
+        </div>
+        <div class="cfg-field" id="cfg-custom-wrap" hidden>
+          <label>自訂抽水（%）</label>
+          <input type="number" id="cfg-commission-custom" value="5" min="0" max="20" step="0.5" inputmode="decimal">
+        </div>
+      </div>
+      <div class="cfg-note" id="cfg-note"></div>
+    </div>
+
     <!-- 統計行 + 進度條 -->
     <div class="stats-strip">
       <div class="row">
         <span>當前局數 <b id="stat-round">#0</b></span>
-        <span>已記錄牌數 <b id="stat-cards">0</b> / 416</span>
+        <span>已記錄牌數 <b id="stat-cards">0</b> <span id="stat-total-lbl">/ 416</span></span>
         <span>剩餘牌組 <b id="stat-remain">416 張</b></span>
       </div>
       <div class="progress"><i id="shoe-progress" style="width:0%"></i></div>
@@ -497,6 +573,70 @@
     <p class="hint" id="prob-note">期望值以「每下注 1 單位」計算；莊贏賠率已內含 5% 抽水（實付 0.95）。</p>
   </section>
 
+  <!-- ============ 建議注數與凱利策略 ============ -->
+  <section class="card" id="kelly-card">
+    <h2><span class="ico">◎</span> 建議注數與策略（凱利公式） <span class="tag">依剩餘牌組動態計算</span></h2>
+
+    <div class="kelly-inputs">
+      <div class="kelly-field">
+        <label>可用資金（本金）</label>
+        <input type="number" id="k-bankroll" value="10000" min="100" step="100" inputmode="numeric">
+      </div>
+      <div class="kelly-field">
+        <label>單位注碼（1 注 = ?）</label>
+        <input type="number" id="k-unit" value="100" min="1" step="10" inputmode="numeric">
+      </div>
+      <div class="kelly-field">
+        <label>凱利係數</label>
+        <select id="k-frac">
+          <option value="1">全凱利 1.0×</option>
+          <option value="0.5">半凱利 0.5×（實務常用）</option>
+          <option value="0.25" selected>¼ 凱利 0.25×（保守）</option>
+        </select>
+      </div>
+      <div class="kelly-field">
+        <label>單注上限（佔資金 %）</label>
+        <input type="number" id="k-cap" value="2" min="0.1" max="100" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="kelly-formula" id="kformula">
+      f* = (p · b − q) / ( b · (1 − r) )　，　q = 1 − p − r　，　建議注碼 = 資金 × 係數 × f*<br>
+      <span id="kelly-odds-note">p = 該選項勝率　b = 淨賠率（莊 0.95、閒 1.00、和 8.00、對子 11.00）　r = 和局退回機率（莊／閒適用）　q = 落敗機率</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="kelly">
+        <thead>
+          <tr>
+            <th>投注選項</th><th>勝率 p</th><th>淨賠率 b</th><th>和局 r</th>
+            <th>全凱利 f*</th><th>調整後 f</th><th>建議注碼</th><th>建議注數</th><th>結論</th>
+          </tr>
+        </thead>
+        <tbody id="kelly-body"></tbody>
+      </table>
+    </div>
+
+    <div class="kelly-summary">
+      <div class="kx"><div class="k">建議下注額（最佳選項）</div><div class="v" id="k-stake">0</div><div class="s" id="k-stake-s">佔資金 0.00%</div></div>
+      <div class="kx"><div class="k">建議注數</div><div class="v" id="k-units">0.00 注</div><div class="s" id="k-units-s">以單位注碼換算</div></div>
+      <div class="kx"><div class="k">數學結論</div><div class="v" id="k-verdict" style="font-size:15px;">—</div><div class="s" id="k-verdict-s">—</div></div>
+      <div class="kx"><div class="k">最接近轉正</div><div class="v" id="k-nearest" style="font-size:15px;">—</div><div class="s" id="k-nearest-s">—</div></div>
+    </div>
+
+    <div class="kelly-advice" id="kelly-advice"></div>
+
+    <div class="table-scroll" style="margin-top:6px;">
+      <table class="kelly">
+        <thead>
+          <tr><th>投注選項</th><th>目前勝率</th><th>損益兩平勝率</th><th>需改善幅度</th><th>每 +1 個百分點勝率的 f* 變化</th></tr>
+        </thead>
+        <tbody id="kelly-thresh-body"></tbody>
+      </table>
+    </div>
+    <p class="hint">損益兩平勝率 = 使期望值歸零所需的勝率；與目前勝率的差距，即「牌組要偏差到什麼程度，數學上才可能出現正期望值」。</p>
+  </section>
+
   <div class="grid-2">
     <!-- ============ 牌局記錄 ============ -->
     <section class="card">
@@ -521,7 +661,8 @@
         <summary>使用說明與計算方式</summary>
         <ul>
           <li><b>機率引擎：</b>以目前剩餘牌組（13 種點數 × 剩餘張數）為基礎，完整列舉所有可能的發牌路徑（含補牌規則），加總出莊贏／閒贏／和局／對子的精確機率，非模擬近似值。</li>
-          <li><b>期望值：</b>莊 = P(莊)×0.95 − P(閒)；閒 = P(閒) − P(莊)；和 = P(和)×8 − (1−P(和))；對子 = P(對子)×11 − (1−P(對子))。和局對莊／閒注為退還（期望值 0）。</li>
+          <li><b>牌靴設定：</b>可選 6 副（312 張）或 8 副（416 張），並設定莊贏抽水（5%／免佣／自訂）。變更副數會重置牌靴並重新精確列舉基準機率；變更抽水只影響賠率與期望值。免佣模式採「莊贏以 6 點勝出時只賠 1:2」的常見規則，莊的淨賠率隨牌組變動。</li>
+          <li><b>期望值：</b>莊 = P(莊)×b − P(閒)，其中 b 為當前莊淨賠率（5% 抽水時 0.95）；閒 = P(閒) − P(莊)；和 = P(和)×8 − (1−P(和))；對子 = P(對子)×11 − (1−P(對子))。和局對莊／閒注為退還（期望值 0）。</li>
           <li><b>路單：</b>大路由莊／閒結果堆疊而成；下三路依「有對／無對、齊腳跳／突腳跳、突腳連」規則由大路衍生。</li>
           <li><b>快速記錄：</b>只記結果不記牌面，適合先建立路單；要讓機率引擎反映實際牌組，請用牌面輸入。</li>
         </ul>
@@ -585,7 +726,7 @@
 
     <div id="shoe-detail"></div>
 
-    <p class="hint">按「新牌靴」時，目前這一靴會自動歸檔進歷史統計；跨靴累計可觀察長期頻率是否貼近理論基準（莊 45.86%／閒 44.62%／和 9.52%）。</p>
+    <p class="hint" id="shoe-hint">按「新牌靴」時，目前這一靴會自動歸檔進歷史統計；跨靴累計可觀察長期頻率是否貼近理論基準（莊 45.86%／閒 44.62%／和 9.52%）。</p>
     <div class="quick-row" style="margin-top:10px;">
       <button id="btn-demo-shoes">載入多靴示範資料</button>
       <button id="btn-clear-history">清除全部歷史靴</button>
@@ -597,6 +738,12 @@
     <b>⚠️ 重要聲明：</b>本工具<b>僅供娛樂與數學研究用途</b>，用於理解百家樂的機率結構與牌路記錄方式。
     百家樂每一局的結果在數學上<b>不保證獲利</b>，且所有投注選項的長期期望值皆為負數（莊家優勢）。
     本工具<b>無法預測下一局結果</b>，牌路僅是過去結果的視覺化，不具預測效力。
+    <br>
+    <b>關於凱利公式：</b>本站的「建議注數與策略」區塊是凱利公式的<b>數學演示</b>，用來說明「只有正期望值才值得下注」這個原理。
+    任何注碼策略（包含凱利、倍投、平注、馬丁格爾）都<b>無法改變期望值</b>，只能改變資金波動的大小；
+    在期望值為負的遊戲上套用凱利公式，數學上的正解就是<b>不下注（注碼 0）</b>。
+    本區塊<b>不構成任何投注建議或獲利保證</b>，讀者須自行評估風險。
+    <br>
     請勿將本工具視為投注建議或獲利保證；請理性看待賭博風險，未滿法定年齡者請勿參與任何賭博活動。
   </div>
 
@@ -612,10 +759,13 @@
    ========================================================= */
 const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const POINT = [1,2,3,4,5,6,7,8,9,0,0,0,0];   // A,2..9,10,J,Q,K
-const DECKS = 8;
-const PER_RANK = 4 * DECKS;                    // 每種點數 32 張
-// 8 副牌標準基準機率（%）
-const BASE = { B:45.8597, P:44.6247, T:9.5156, BP:7.4699, PP:7.4699 };
+let DECKS = 8;                                 // 牌靴副數（可設定 6 或 8）
+let PER_RANK = 4 * DECKS;                      // 每種點數張數
+let commission = 0.05;                         // 莊贏抽水比例
+let bankerNet = 1 - commission;                // 莊淨賠率
+
+// 標準基準機率（%）—— 由目前副數的滿靴牌組即時計算
+let BASE = { B:45.8597, P:44.6247, T:9.5156, BP:7.4699, PP:7.4699 };
 
 let counts = new Array(13).fill(PER_RANK);     // 剩餘張數
 let hands = [];                                // {result:'B'|'P'|'T', pPair, bPair, cards:[...]}
@@ -699,11 +849,11 @@ function analyze(cnt){
   const T = cnt.reduce((a,b)=>a+b,0);
   if (T < 6) return null;
 
-  let banker=0, player=0, tie=0, ppair=0, bpair=0;
+  let banker=0, player=0, tie=0, ppair=0, bpair=0, bWin6=0;
   const c = cnt.slice();
 
   function resolve(pT,bT,prob,isPP,isBP){
-    if(pT>bT){ player+=prob; } else if(bT>pT){ banker+=prob; } else { tie+=prob; }
+    if(pT>bT){ player+=prob; } else if(bT>pT){ banker+=prob; if(bT===6) bWin6+=prob; } else { tie+=prob; }
     if(isPP) ppair+=prob;
     if(isBP) bpair+=prob;
   }
@@ -781,8 +931,106 @@ function analyze(cnt){
   if(total<=0) return null;
   return {
     banker:banker/total, player:player/total, tie:tie/total,
-    pPair:ppair/total, bPair:bpair/total
+    pPair:ppair/total, bPair:bpair/total,
+    bWin6:bWin6/total
   };
+}
+
+/* =========================================================
+   牌靴設定（v5）：副數 6／8 與莊贏抽水
+   ========================================================= */
+const CFG_KEY = "baccarat-shoe-cfg-v5";
+
+function loadCfg(){
+  try{
+    const raw = localStorage.getItem(CFG_KEY);
+    if(!raw) return;
+    const o = JSON.parse(raw);
+    if(o && (o.decks===6 || o.decks===8)) DECKS = o.decks;
+    if(o && typeof o.commission === "number" && o.commission>=0 && o.commission<=20){
+      commission = o.commission/100;
+    }
+  }catch(e){ /* 忽略 */ }
+}
+
+function saveCfg(){
+  try{ localStorage.setItem(CFG_KEY, JSON.stringify({decks:DECKS, commission:Math.round(commission*10000)/100})); }catch(e){ /* 忽略 */ }
+}
+
+/* 滿靴基準機率（由目前副數精確列舉，非硬寫死） */
+function computeBase(decks){
+  const c = new Array(13).fill(4*decks);
+  const a = analyze(c);
+  if(!a) return {B:45.8597,P:44.6247,T:9.5156,BP:7.4699,PP:7.4699};
+  return {B:a.banker*100,P:a.player*100,T:a.tie*100,BP:a.bPair*100,PP:a.pPair*100};
+}
+
+/* 莊淨賠率：抽水模式 = 1−抽水；免佣模式 = 1 − 0.5×(莊彙 6 點機率 / 莊勝機率) */
+function bankerNetOdds(a){
+  if(commission > 0) return 1 - commission;
+  if(!a || !(a.banker>0)) return 1;
+  const q6 = a.bWin6 / a.banker;      // 莊勝中以 6 點勝出的比例
+  return 1 - 0.5*q6;                   // 免佣常見規則：莊 6 點只賠一半
+}
+
+/* 套用設定：重算 PER_RANK／基準機率，並重置牌靴 */
+function applyConfig(opts){
+  const o = opts || {};
+  PER_RANK = 4 * DECKS;
+  BASE = computeBase(DECKS);
+  if(o.reset){
+    counts = new Array(13).fill(PER_RANK);
+    hands = []; cur = []; viewingShoe = null;
+  }
+  syncCfgUI();
+  renderAll();
+}
+
+function syncCfgUI(){
+  const pct = Math.round(commission*10000)/100;   // 轉為百分比，保留兩位
+  if($("cfg-decks")) $("cfg-decks").value = String(DECKS);
+  if($("cfg-commission")){
+    const sel = $("cfg-commission");
+    if(pct === 5) sel.value = "5";
+    else if(pct === 0) sel.value = "0";
+    else sel.value = "custom";
+    if($("cfg-custom-wrap")) $("cfg-custom-wrap").hidden = (sel.value !== "custom");
+    if($("cfg-commission-custom")) $("cfg-commission-custom").value = pct;
+  }
+
+  if($("ver-badge")) $("ver-badge").textContent = DECKS+" 副牌 · "+(PER_RANK*13)+" 張";
+  if($("stat-total-lbl")) $("stat-total-lbl").textContent = "/ "+(PER_RANK*13);
+
+  const modeTxt = commission>0
+    ? (pct===5 ? "標準 5% 抽水" : "自訂 "+pct+"% 抽水")
+    : "免佣 0%（莊贏 6 點只賠一半，實務常見規則）";
+  if($("cfg-note")){
+    $("cfg-note").innerHTML =
+      "目前設定：<b>"+DECKS+" 副牌（"+(PER_RANK*13)+" 張）</b>、<b>"+modeTxt+"</b>。"+
+      "變更副數會重設當前牌靴（原牌靴自動歸檔）；變更抽水比例會即時重算機率、期望值與凱利注碼。"+
+      (commission>0
+        ? ""
+        : "<br><span class=\"cfg-warn\">⚠ 免佣模式已按「莊 6 點賠 1:2」計算，莊的淨賠率會隨剩餘牌組變動（約 0.94～0.96）。</span>");
+  }
+  if($("prob-note") && typeof lastAnalyze !== "undefined" && lastAnalyze){
+    updateProbNote(lastAnalyze);
+  }
+}
+
+/* 機率表下方注記：反映目前副數與抽水 */
+function updateProbNote(a){
+  const el = $("prob-note");
+  if(!el) return;
+  const pct = Math.round(commission*10000)/100;
+  const nb = bankerNetOdds(a);
+  const totalCards = PER_RANK*13;
+  el.innerHTML = commission>0
+    ? "期望值以「每下注 1 單位」計算；莊贏淨賠率 <b>"+nb.toFixed(3)+" : 1</b>（抽水 "+pct+"%）。牌靴 <b>"+DECKS+" 副牌</b>，共 "+totalCards+" 張。"
+    : "期望值以「每下注 1 單位」計算；目前為<b>免佣</b>模式，莊贏淨賠率 <b>"+nb.toFixed(3)+" : 1</b>（莊 6 點賠半，隨剩餘牌組變動）。牌靴 <b>"+DECKS+" 副牌</b>，共 "+totalCards+" 張。";
+  const kn = $("kelly-odds-note");
+  if(kn){
+    kn.innerHTML = "p = 該選項勝率　b = 淨賠率（莊 <b>"+nb.toFixed(3)+"</b>、閒 1.00、和 8.00、對子 11.00）　r = 和局退回機率（莊／閒適用）　q = 落敗機率";
+  }
 }
 
 /* =========================================================
@@ -1036,8 +1284,12 @@ function renderDerived(){
   });
 }
 
+/* 目前牌組分析快取（供設定列顯示淨賠率與機率注記） */
+let lastAnalyze = null;
+
 function renderProb(){
   const a=analyze(counts);
+  lastAnalyze = a;
   const body=$("prob-body");
   body.innerHTML="";
   if(!a){
@@ -1047,8 +1299,10 @@ function renderProb(){
     $("advice-box").innerHTML='<div class="advice warn"><div class="t">牌組不足</div><div class="d">剩餘張數過少，請重新開靴。</div></div>';
     return;
   }
+  const nb = bankerNetOdds(a);
+  updateProbNote(a);
   const rows=[
-    {name:"莊贏 (Banker)", p:a.banker, pay:"0.95 : 1", ev:a.banker*0.95 - a.player, color:"var(--red)", base:BASE.B},
+    {name:"莊贏 (Banker)", p:a.banker, pay:nb.toFixed(3)+" : 1", ev:a.banker*nb - a.player, color:"var(--red)", base:BASE.B},
     {name:"閒贏 (Player)", p:a.player, pay:"1 : 1", ev:a.player - a.banker, color:"var(--blue)", base:BASE.P},
     {name:"和局 (Tie)", p:a.tie, pay:"8 : 1", ev:a.tie*8 - (1-a.tie), color:"var(--green)", base:BASE.T},
     {name:"莊對子 (Banker Pair)", p:a.bPair, pay:"11 : 1", ev:a.bPair*11 - (1-a.bPair), color:"#b06a2f", base:BASE.BP},
@@ -1119,7 +1373,9 @@ function renderAdvice(a,rows,best){
 
   add("warn","數學上相對最佳："+best.name,
     "目前期望值 "+((best.ev>=0?"+":"")+best.ev.toFixed(4))+"（每 1 單位注碼）。"+
-    "即便如此，長期期望值仍為負數，莊家優勢約 "+(-best.ev*100).toFixed(2)+"%。");
+    (best.ev>=0
+      ? "此設定下該選項呈現<b>微幅正期望值</b>，但幅度極小且完全依賴剩餘牌組估計，長期實際結果仍可能偏離。"
+      : "即便為相對最佳，長期期望值仍為負數，每注平均損失約 "+(-best.ev*100).toFixed(2)+"%。"));
 
   const small=counts[0]+counts[1]+counts[2]+counts[3]+counts[4];
   const big=counts[5]+counts[6]+counts[7]+counts[8];
@@ -1151,6 +1407,182 @@ function renderAdvice(a,rows,best){
 
   add("bad","務必留意",
     "以上僅為數學期望值的相對比較，<b>不構成投注建議，也不保證獲利</b>。百家樂每局結果獨立，牌路無法預測下一局。");
+}
+
+/* =========================================================
+   凱利公式：建議注數與策略（v4）
+   f* = (p·b − q) / (b·(1 − r))
+   p = 勝率　b = 淨賠率　r = 和局退回機率　q = 1 − p − r
+   ========================================================= */
+function kellyFrac(p, b, r){
+  if(!(b>0)) return 0;
+  const rr = Math.min(Math.max(r||0,0),0.999);
+  const q = 1 - p - rr;
+  const denom = b * (1 - rr);
+  if(denom<=0) return 0;
+  return (p*b - q) / denom;
+}
+
+/* 各選項參數：名稱、勝率、淨賠率、和局退回機率 */
+function kellyOptions(a){
+  const nb = bankerNetOdds(a);
+  return [
+    {key:"B",  name:"莊贏 (Banker)",      p:a.banker, b:nb, r:a.tie, color:"var(--red)"},
+    {key:"P",  name:"閒贏 (Player)",      p:a.player, b:1.00, r:a.tie, color:"var(--blue)"},
+    {key:"T",  name:"和局 (Tie)",         p:a.tie,    b:8.00, r:0,     color:"var(--green)"},
+    {key:"BP", name:"莊對子 (Banker Pair)", p:a.bPair,  b:11.00,r:0,     color:"#d98b4a"},
+    {key:"PP", name:"閒對子 (Player Pair)", p:a.pPair,  b:11.00,r:0,     color:"#4aa8d9"}
+  ];
+}
+
+/* 損益兩平勝率：使期望值歸零所需勝率 */
+function breakEvenP(b, r){
+  return (1 - (r||0)) / (b + 1);
+}
+
+function renderKelly(){
+  const body = $("kelly-body");
+  const thBody = $("kelly-thresh-body");
+  const advBox = $("kelly-advice");
+  if(!body) return;
+
+  const bankroll = Math.max(1, parseFloat($("k-bankroll").value) || 10000);
+  const unit     = Math.max(1, parseFloat($("k-unit").value) || 100);
+  const frac     = parseFloat($("k-frac").value) || 0.25;
+  const capPct   = Math.min(100, Math.max(0.1, parseFloat($("k-cap").value) || 2));
+  const capFrac  = capPct / 100;
+
+  const a = analyze(counts);
+  body.innerHTML = ""; thBody.innerHTML = ""; advBox.innerHTML = "";
+
+  if(!a){
+    body.innerHTML = '<tr><td colspan="9" class="empty-note">剩餘牌組不足，無法計算凱利注碼。</td></tr>';
+    thBody.innerHTML = '<tr><td colspan="5" class="empty-note">—</td></tr>';
+    $("k-stake").textContent = "—"; $("k-stake-s").textContent = "—";
+    $("k-units").textContent = "—"; $("k-units-s").textContent = "—";
+    $("k-verdict").textContent = "—"; $("k-verdict-s").textContent = "—";
+    $("k-nearest").textContent = "—"; $("k-nearest-s").textContent = "—";
+    return;
+  }
+
+  const opts = kellyOptions(a).map(o=>{
+    const f  = kellyFrac(o.p, o.b, o.r);
+    let fa   = f * frac;                        // 調整後比例
+    let capped = false;
+    if(fa > capFrac){ fa = capFrac; capped = true; }   // 單注上限保護
+    const st = fa > 0 ? Math.min(bankroll * fa, bankroll) : 0;
+    return Object.assign({}, o, {f:f, fa:fa, stake:st, units:st/unit, capped:capped, rawFrac:f*frac});
+  });
+
+  /* ---- 主表格 ---- */
+  opts.forEach(o=>{
+    const tr = document.createElement("tr");
+    const fCls = o.f > 0 ? "pos" : "kelly-zero";
+    let badge;
+    if(o.f <= 0) badge = '<span class="kelly-badge nobet">不下注</span>';
+    else if(o.capped) badge = '<span class="kelly-badge capped">已削減至上限</span>';
+    else badge = '<span class="kelly-badge bet">可下注</span>';
+    tr.innerHTML =
+      '<td><span style="color:'+o.color+';font-weight:800">'+o.name+'</span></td>'+
+      '<td class="num">'+(o.p*100).toFixed(3)+'%</td>'+
+      '<td class="num">'+o.b.toFixed(2)+'</td>'+
+      '<td class="num">'+(o.r>0?(o.r*100).toFixed(2)+'%':'—')+'</td>'+
+      '<td class="num '+fCls+'">'+(o.f>=0?"+":"")+o.f.toFixed(4)+'</td>'+
+      '<td class="num '+fCls+'">'+(o.fa>=0?"+":"")+o.fa.toFixed(4)+'</td>'+
+      '<td class="num">'+(o.stake>0?Math.round(o.stake).toLocaleString("en-US"):"0")+'</td>'+
+      '<td class="num">'+(o.f>0?o.units.toFixed(2)+" 注":"0 注")+'</td>'+
+      '<td>'+badge+'</td>';
+    body.appendChild(tr);
+  });
+
+  /* ---- 損益兩平門檻表 ---- */
+  opts.forEach(o=>{
+    const pbe = breakEvenP(o.b, o.r);
+    const gap = (pbe - o.p) * 100;                 // 需改善幾個百分點
+    const slope = (o.b + 1) / (o.b * (1 - (o.r||0)));  // 每 +1pp 的 f* 變化
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td><span style="color:'+o.color+';font-weight:700">'+o.name.replace(/\s*\(.*\)/,"")+'</span></td>'+
+      '<td class="num">'+(o.p*100).toFixed(3)+'%</td>'+
+      '<td class="num">'+(pbe*100).toFixed(3)+'%</td>'+
+      '<td class="num '+(gap>0?"neg":"pos")+'">'+(gap>0?"+":"")+gap.toFixed(3)+" pp</td>"+
+      '<td class="num">'+"+"+slope.toFixed(4)+'</td>';
+    thBody.appendChild(tr);
+  });
+
+  /* ---- 最佳（最接近轉正）選項 ---- */
+  let best = opts[0];
+  opts.forEach(o=>{ if(o.f > best.f) best = o; });
+  const anyPos = opts.some(o=>o.f > 0);
+
+  $("k-stake").textContent = best.stake > 0 ? Math.round(best.stake).toLocaleString("en-US") : "0";
+  $("k-stake-s").textContent = best.f > 0
+    ? (best.capped
+        ? "已由 "+(best.rawFrac*100).toFixed(2)+"% 削減至上限 "+capPct+"%（"+best.name.replace(/\s*\(.*\)/,"")+"）"
+        : "佔資金 "+(best.fa*100).toFixed(3)+"%（"+best.name.replace(/\s*\(.*\)/,"")+"）")
+    : "全凱利 f* 為負值，數學上建議不下注";
+  $("k-units").textContent = best.stake > 0 ? best.units.toFixed(2)+" 注" : "0 注";
+  $("k-units-s").textContent = best.stake > 0
+    ? "每注 "+unit.toLocaleString("en-US")+" 元"
+    : (best.units>0 ? "不足 1 注" : "無正期望值選項");
+  $("k-verdict").textContent = anyPos ? "存在正期望值" : "不下注";
+  $("k-verdict").style.color = anyPos ? "var(--green)" : "var(--red)";
+  $("k-verdict-s").textContent = anyPos
+    ? "有選項 f* > 0，始可依比例下注"
+    : "五個選項 f* 全為負值";
+  $("k-nearest").textContent = best.name.replace(/\s*\(.*\)/,"");
+  $("k-nearest-s").textContent = "f* "+(best.f>=0?"+":"")+best.f.toFixed(4)+"　需改善 "+((breakEvenP(best.b,best.r)-best.p)*100).toFixed(2)+" pp";
+
+  /* ---- 策略建議 ---- */
+  const add = (cls,t,d)=>{
+    const el = document.createElement("div");
+    el.className = "advice "+cls;
+    el.innerHTML = '<div class="t">'+t+'</div><div class="d">'+d+'</div>';
+    advBox.appendChild(el);
+  };
+
+  const tiePct = (a.tie*100).toFixed(2);
+  if(anyPos){
+    const cappedNote = best.capped
+      ? "　⚠ 公式原始比例為 "+(best.rawFrac*100).toFixed(2)+"% 資金，已依「單注上限 "+capPct+"%」保護機制削減至 "+(best.fa*100).toFixed(2)+"%。"
+      : "";
+    add("good","凱利公式：存在正期望值選項",
+      "目前 <b>"+best.name+"</b> 的全凱利 f* 為 <b>"+(best.f*100).toFixed(3)+"%</b>，乘上係數 "+frac+
+      " 後建議下注 <b>"+(best.fa*100).toFixed(3)+"%</b> 資金（"+Math.round(best.stake).toLocaleString("en-US")+" 元 / "+best.units.toFixed(2)+" 注）。"+
+      cappedNote+
+      "<br>請注意：這只有在牌組<b>極端偏差</b>時才會出現，而且剩餘張數往往很少、估計誤差極大，優勢也極薄。");
+  } else {
+    add("bad","凱利公式的結論：不下注（注碼 0）",
+      "五個投注選項的全凱利 f* 全部為負值，代表<b>沒有任何選項具備正期望值</b>。"+
+      "凱利公式在 f* ≤ 0 時的數學解就是「不下注」，因此建議注碼為 <b>0</b>。"+
+      "這正是百家樂在絕大多數牌靴狀態下的真實結果，並非計算錯誤。");
+  }
+
+  add("warn","最接近損益兩平的選項："+best.name.replace(/\s*\(.*\)/,""),
+    "目前勝率 <b>"+(best.p*100).toFixed(3)+"%</b>，損益兩平需 <b>"+(breakEvenP(best.b,best.r)*100).toFixed(3)+"%</b>，"+
+    "尚差 <b>"+((breakEvenP(best.b,best.r)-best.p)*100).toFixed(3)+" 個百分點</b>。"+
+    "換句話說，牌靴必須偏差到這個程度，該選項的期望值才會翻正。");
+
+  // 可信度警示：剩餘張數越少，機率估計誤差越大
+  const remainTot = counts.reduce((x,y)=>x+y,0);
+  if(remainTot < 120){
+    add("bad","⚠ 可信度警示：剩餘牌組過少",
+      "目前僅剩 <b>"+remainTot+" 張</b>（約 "+(remainTot/52).toFixed(1)+" 副）。正期望值通常只在牌靴末段出現，"+
+      "但此時估計誤差也最大：<b>漏記或錯記一張牌，就足以讓 f* 由正翻負</b>。"+
+      "本區塊算出的注碼在這種狀態下<b>不具實務參考價值</b>，僅供理解公式之用。");
+  }
+
+  add("warn","凱利公式的假設與限制",
+    "凱利公式假設「勝率 p 已知且固定、每局獨立、可無限分割注碼」。實務上："+
+    "(1) p 是依剩餘牌組推算的<b>估計值</b>，只要漏記一張牌就會偏離；"+
+    "(2) 百家樂每局結果彼此獨立，但本工具的 p 隨牌靴變動，屬條件機率；"+
+    "(3) 全凱利 1.0× 的資金波動極大，實務上多用 0.25×～0.5× 降低回撤；"+
+    "(4) 牌靴末段剩餘張數少，估計誤差放大，優勢訊號並不可靠。");
+
+  add("bad","風險聲明（務必閱讀）",
+    "本區塊僅為<b>凱利公式的數學演示</b>，用於理解「正期望值才值得下注」這個原理，"+
+    "<b>不構成任何投注建議，也不保證獲利</b>。百家樂各投注選項內建莊家優勢（莊約 1.06%、閒約 1.24%、和約 14.4%、對子約 10.4%），"+
+    "長期反覆下注的期望值必為負數；任何注碼策略（含凱利、倍投、平注）都<b>無法改變期望值</b>，只能改變波動大小。");
 }
 
 function renderLog(){
@@ -1381,7 +1813,7 @@ function renderShoeDetail(){
 function renderAll(){
   renderPad(); renderHand(); renderTopStats(); renderDeck();
   renderBead(); renderBigRoad(); renderDerived();
-  renderProb(); renderLog(); renderStats(); renderShoeHistory();
+  renderProb(); renderKelly(); renderLog(); renderStats(); renderShoeHistory();
 }
 
 /* =========================================================
@@ -1455,7 +1887,7 @@ function resetShoe(opts){
   hands=[]; cur=[]; viewingShoe=null;
   renderAll();
   if(silent) return;
-  toast(archived ? "已歸檔上一靴並開新牌靴（8 副牌）" : "已開新牌靴（8 副牌）");
+  toast(archived ? "已歸檔上一靴並開新牌靴（"+DECKS+" 副牌）" : "已開新牌靴（"+DECKS+" 副牌）");
 }
 
 function loadDemoShoes(){
@@ -1548,6 +1980,14 @@ $("btn-quick-b").addEventListener("click",()=>quickRecord("B"));
 $("btn-quick-p").addEventListener("click",()=>quickRecord("P"));
 $("btn-quick-t").addEventListener("click",()=>quickRecord("T"));
 
+// 凱利注碼輸入
+["k-bankroll","k-unit","k-frac","k-cap"].forEach(id=>{
+  const el = $(id);
+  if(!el) return;
+  el.addEventListener("input", renderKelly);
+  el.addEventListener("change", renderKelly);
+});
+
 // 示範按鈕（hero 區新增的入口，若存在）
 const btnDemo=$("btn-demo");
 if(btnDemo) btnDemo.addEventListener("click",loadDemo);
@@ -1557,6 +1997,67 @@ if(btnClearHist) btnClearHist.addEventListener("click",clearHistory);
 
 const btnDemoShoes=$("btn-demo-shoes");
 if(btnDemoShoes) btnDemoShoes.addEventListener("click",loadDemoShoes);
+
+// 牌靴設定（v5）：副數與莊贏抽水
+const cfgDecks = $("cfg-decks");
+if(cfgDecks){
+  cfgDecks.addEventListener("change", ()=>{
+    const d = parseInt(cfgDecks.value,10);
+    if(d!==6 && d!==8) return;
+    const hadHands = hands.length>0 || counts.some((n,i)=>n<PER_RANK);
+    if(hadHands && !window.confirm("變更牌靴副數會將目前這一牌靴歸檔並開啟新牌靴（"+d+" 副牌）。要繼續嗎？")){
+      cfgDecks.value = String(DECKS);
+      return;
+    }
+    if(!hadHands) { /* 空牌靴不需歸檔 */ }
+    else archiveCurrentShoe();
+    DECKS = d;
+    saveCfg();
+    applyConfig({reset:true});
+    toast("已切換為 "+DECKS+" 副牌（"+(PER_RANK*13)+" 張），所有機率與期望值已重算");
+  });
+}
+
+const cfgComm = $("cfg-commission");
+if(cfgComm){
+  cfgComm.addEventListener("change", ()=>{
+    const v = cfgComm.value;
+    if(v === "custom"){
+      if($("cfg-custom-wrap")) $("cfg-custom-wrap").hidden = false;
+      const cv = parseFloat($("cfg-commission-custom").value);
+      commission = (Number.isFinite(cv) ? Math.min(20,Math.max(0,cv)) : 5) / 100;
+    } else {
+      if($("cfg-custom-wrap")) $("cfg-custom-wrap").hidden = true;
+      commission = parseFloat(v) / 100;
+    }
+    bankerNet = 1 - commission;
+    saveCfg();
+    BASE = computeBase(DECKS);
+    syncCfgUI();
+    renderAll();
+    toast(commission>0 ? "抽水比例已設為 "+(commission*100)+"%" : "已切換為免佣模式（莊 6 點賠半）");
+  });
+}
+
+const cfgCommCustom = $("cfg-commission-custom");
+if(cfgCommCustom){
+  cfgCommCustom.addEventListener("input", ()=>{
+    const cv = parseFloat(cfgCommCustom.value);
+    if(!Number.isFinite(cv)) return;
+    commission = Math.min(20,Math.max(0,cv)) / 100;
+    bankerNet = 1 - commission;
+    saveCfg();
+    syncCfgUI();
+    renderAll();
+  });
+}
+
+loadCfg();
+PER_RANK = 4 * DECKS;
+counts = new Array(13).fill(PER_RANK);
+BASE = computeBase(DECKS);
+bankerNet = 1 - commission;
+syncCfgUI();
 
 loadHistory();
 renderAll();
