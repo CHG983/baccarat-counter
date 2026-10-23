@@ -1,0 +1,36 @@
+name: Deploy v5 from URL
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL of the file to deploy"
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and validate
+        run: |
+          set -euo pipefail
+          curl -fsSL "${{ inputs.url }}" -o /tmp/new
+          size=$(wc -c < /tmp/new); echo "bytes: $size"
+          [ "$size" -ge 85000 ] || { echo "::error::file too small"; exit 1; }
+          grep -q "\u724c\u9774\u526f\u6578" /tmp/new || { echo "::error::shoe-count marker missing"; exit 1; }
+          grep -q "\u514d\u4f63" /tmp/new || { echo "::error::commission marker missing"; exit 1; }
+          grep -q "\u51f1\u5229" /tmp/new || { echo "::error::kelly marker missing"; exit 1; }
+          grep -q "baccarat-counter" /tmp/new || { echo "::error::title marker missing"; exit 1; }
+          python3 -c "import re,sys; s=open('/tmp/new',encoding='utf-8').read(); assert s.count('<html')>=1; assert s.count('</html>')>=1; print('structure ok')"
+      - name: Commit
+        run: |
+          set -euo pipefail
+          cp /tmp/new index.html
+          git config user.name "Agent"
+          git config user.email "agent@example.com"
+          git add -A
+          git diff --cached --quiet || { git commit -m "feat: update baccarat counter to v5 with shoe-count and commission settings"; git push; }
+          sha256sum index.html
+          wc -c index.html
