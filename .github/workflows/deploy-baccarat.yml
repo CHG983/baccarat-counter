@@ -1,0 +1,33 @@
+name: Deploy from URL
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL of the file to deploy"
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch and validate
+        run: |
+          set -euo pipefail
+          curl -fsSL "${{ inputs.url }}" -o /tmp/new
+          size=$(wc -c < /tmp/new); echo "bytes: $size"
+          [ "$size" -ge 60000 ] || { echo "::error::file too small"; exit 1; }
+          grep -q "百家樂算牌輔助系統" /tmp/new || { echo "::error::marker missing"; exit 1; }
+          grep -q "多靴" /tmp/new || { echo "::error::multi-shoe marker missing"; exit 1; }
+          grep -q "僅供娛樂" /tmp/new || { echo "::error::disclaimer missing"; exit 1; }
+      - name: Commit
+        run: |
+          set -euo pipefail
+          cp /tmp/new index.html
+          git config user.name "Agent"
+          git config user.email "agent@example.com"
+          git add -A
+          git diff --cached --quiet || { git commit -m "feat: deploy baccarat counter v3"; git push; }
+          sha256sum index.html
