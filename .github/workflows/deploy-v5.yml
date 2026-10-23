@@ -19,11 +19,10 @@ jobs:
           curl -fsSL "${{ inputs.url }}" -o /tmp/new
           size=$(wc -c < /tmp/new); echo "bytes: $size"
           [ "$size" -ge 85000 ] || { echo "::error::file too small"; exit 1; }
-          grep -q "\u724c\u9774\u526f\u6578" /tmp/new || { echo "::error::shoe-count marker missing"; exit 1; }
-          grep -q "\u514d\u4f63" /tmp/new || { echo "::error::commission marker missing"; exit 1; }
-          grep -q "\u51f1\u5229" /tmp/new || { echo "::error::kelly marker missing"; exit 1; }
-          grep -q "baccarat-counter" /tmp/new || { echo "::error::title marker missing"; exit 1; }
-          python3 -c "import re,sys; s=open('/tmp/new',encoding='utf-8').read(); assert s.count('<html')>=1; assert s.count('</html>')>=1; print('structure ok')"
+          for m in commission kelly cfg-decks kelly-card cfg-commission; do
+            if grep -q "$m" /tmp/new; then echo "marker ok: $m"; else echo "::error::marker missing: $m"; exit 1; fi
+          done
+          python3 -c "s=open('/tmp/new',encoding='utf-8').read(); assert '<html' in s and '</html>' in s; assert s.count('<div')>50; print('structure ok', s.count('<div'))"
       - name: Commit
         run: |
           set -euo pipefail
