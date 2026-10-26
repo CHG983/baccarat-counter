@@ -752,6 +752,31 @@
 
   .auth-mode-note{font-size:11px;color:var(--ink-faint);margin:13px 0 0;line-height:1.65;}
   .auth-mode-note b{color:var(--gold-2);font-weight:700;}
+
+  /* v11：設定就緒檢查表（讓部署者一眼看出還缺哪兩個值） */
+  .cfg-check{list-style:none;margin:9px 0 0;padding:0;display:grid;gap:6px;}
+  .cfg-check .ck{
+    display:flex;align-items:flex-start;gap:8px;
+    padding:7px 9px;border-radius:9px;
+    border:1px solid var(--line);background:rgba(255,255,255,.02);
+    font-size:11px;line-height:1.5;
+  }
+  .cfg-check .ck-ico{
+    flex:0 0 auto;width:15px;height:15px;border-radius:50%;
+    display:grid;place-items:center;font-size:9px;font-weight:800;
+    margin-top:1px;
+  }
+  .cfg-check .ck.ok .ck-ico{background:rgba(74,222,128,.16);color:#4ade80;border:1px solid rgba(74,222,128,.45);}
+  .cfg-check .ck.ok .ck-ico::after{content:"\2713";}
+  .cfg-check .ck.no .ck-ico{background:rgba(251,191,36,.13);color:var(--gold-2);border:1px solid rgba(251,191,36,.4);}
+  .cfg-check .ck.no .ck-ico::after{content:"!";}
+  .cfg-check .ck-body{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .cfg-check .ck-body b{color:var(--ink);font-weight:700;font-size:11px;}
+  .cfg-check .ck-val{color:var(--ink-faint);word-break:break-all;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;}
+  .cfg-check .ck.ok .ck-val{color:#7ee2a8;}
+  .cfg-check-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0 0;font-size:10.5px;color:var(--ink-muted);font-weight:700;}
+  .cfg-check-sum{color:var(--gold-2);font-weight:800;}
+  .cfg-check-sum.ok{color:#7ee2a8;}
   .auth-msg{
     margin-top:12px;padding:9px 12px;border-radius:10px;
     font-size:11.5px;line-height:1.6;
@@ -945,8 +970,21 @@
       </button>
 
       <p class="auth-mode-note" id="auth-mode-note">—</p>
+
+      <div class="cfg-check-head"><span>啟用真實簽章驗證所需設定</span><span class="cfg-check-sum" id="cfg-check-sum">—</span></div>
+      <ul class="cfg-check" id="cfg-check" aria-label="啟用真實簽章驗證所需設定">
+        <li class="ck no" data-ck="clientid">
+          <span class="ck-ico" aria-hidden="true"></span>
+          <span class="ck-body"><b>Google OAuth 用戶端 ID</b><span class="ck-val" id="ck-clientid-val">—</span></span>
+        </li>
+        <li class="ck no" data-ck="backend">
+          <span class="ck-ico" aria-hidden="true"></span>
+          <span class="ck-body"><b>後端驗簽服務網址</b><span class="ck-val" id="ck-backend-val">—</span></span>
+        </li>
+      </ul>
+
       <div class="auth-msg" id="auth-msg" role="alert" hidden></div>
-      <p class="auth-foot">登入狀態會保存在此瀏覽器 <b>30 天</b>，期間重新開啟不必再次登入。</p>
+      <p class="auth-foot">登入狀態會保存在此瀏覽器 <b>30 天</b>，期間重新開啟不必再次登入。<span id="auth-foot-backend" hidden><br>後端模式下由伺服器 session cookie 決定，效期以後端設定為準（範例預設 7 天）。</span></p>
 
       <details class="auth-detail">
         <summary>登入方式、設定步驟與限制</summary>
@@ -964,10 +1002,23 @@
           </ol>
           <b>限制（請務必了解）</b>
           <ul>
-            <li>本頁是純前端單一檔案，登入狀態只存在 <code>localStorage</code>，<b>不是伺服器端的安全驗證</b>，熟悉技術的人可自行繞過。</li>
-            <li>真實模式下，Google 回傳的 ID token 只在前端解碼顯示，<b>未經驗證簽章</b>；若需要真正的存取控制，必須加上後端驗證與伺服器 session。</li>
+            <li><b>後端模式（已設 <code>AUTH_CFG.backendUrl</code>）</b>：本頁會把 Google 回傳的 credential POST 到後端，由伺服器以 Google 公鑰驗證<b>簽章、aud、iss、exp</b>，再以 <b>HttpOnly cookie</b> 建立 session。此模式下登入狀態完全由伺服器決定，前端無法自行偽造，下列純前端弱點即不適用。</li>
+            <li><b>未設後端時（純前端）</b>：登入狀態只存在 <code>localStorage</code>，<b>不是伺服器端的安全驗證</b>，熟悉技術的人可自行繞過。</li>
+            <li>未設後端時，Google 回傳的 ID token 只在前端解碼顯示，<b>未經驗證簽章</b>；若需要真正的存取控制，必須設定 <code>AUTH_CFG.backendUrl</code> 指向可執行驗簽章的伺服器。</li>
             <li>示範模式<b>不連線 Google、不送出任何帳號或密碼、也不進行真實身分驗證</b>，僅用於展示登入流程與版面。</li>
             <li>登出僅清除登入狀態，此瀏覽器中的牌靴設定與牌局紀錄仍會保留。</li>
+          </ul>
+          <b>後端驗證模式怎麼啟用</b>
+          <ol>
+            <li>部署範例後端（repo 內 <code>backend/</code>，提供 Node.js/Express 與 Python/FastAPI 兩版，行為完全一致）。</li>
+            <li>後端設定 <code>GOOGLE_CLIENT_ID</code> 為同一組 OAuth 用戶端 ID，並設定 <code>ALLOWED_ORIGINS</code> 為本站網址。</li>
+            <li>回到本檔，把 <code>AUTH_CFG.backendUrl</code> 填成後端網址（例如 <code>https://auth.example.com</code>）。</li>
+            <li>存檔重新部署。頁面會自動改走後端驗證，登入頁上方會標示「後端驗證模式」。</li>
+          </ol>
+          <b>完整設定文件</b>
+          <ul>
+            <li><a href="https://github.com/CHG983/baccarat-counter/blob/main/SETUP-AUTH.md" target="_blank" rel="noopener noreferrer">SETUP-AUTH.md</a> — 逐步設定、環境變數、測試指令、安全檢查清單</li>
+            <li><a href="https://github.com/CHG983/baccarat-counter/tree/main/backend" target="_blank" rel="noopener noreferrer">backend/</a> — Node.js 與 Python 後端範例（含測試）</li>
           </ul>
         </div>
       </details>
@@ -3492,6 +3543,13 @@ const AUTH_CFG = {
        OAuth 2.0 網頁應用程式用戶端 ID（結尾為 .apps.googleusercontent.com），
        並在 Google Cloud Console 把網站網域加入「已授權的 JavaScript 來源」。 */
   googleClientId: "",
+  /* ★★ 後端驗證模式（建議）
+     填入後端網址（例如 "https://auth.example.com"）後，本頁會改為把 Google 回傳的
+     credential POST 到 {backendUrl}/api/auth/google，由伺服器以 Google 公鑰驗證
+     簽章／aud／iss／exp，再以 HttpOnly cookie 建立 session。
+     留空 → 沿用前端解碼或示範登入（僅供展示，不具備真正的存取控制）。
+     後端範例：documents/baccarat-auth-backend/（Node.js 與 Python 兩版） */
+  backendUrl: "",
   sessionDays: 30,
   storageKey: "baccarat-auth-v1"
 };
@@ -3584,7 +3642,7 @@ function applyAuthUI(){
   const nm = $("user-name"), sb = $("user-sub"), av = $("user-avatar");
   if(nm) nm.textContent = s.name;
   if(sb){
-    sb.textContent = (s.mode === "google" ? "Google 帳戶 · " : "示範登入 · ") + s.email;
+    sb.textContent = (s.mode === "demo" ? "示範登入 · " : "Google 帳戶 · ") + s.email;
     sb.title = s.email;
   }
   if(!av) return;
@@ -3633,12 +3691,14 @@ function signIn(profile, mode){
     email: String(profile.email || ""),
     picture: profile.picture || "",
     sub: profile.sub || "",
-    mode: mode === "google" ? "google" : "demo",
+    mode: mode === "backend" ? "backend" : (mode === "google" ? "google" : "demo"),
     issuedAt: now,
     expiresAt: now + AUTH_CFG.sessionDays * 86400000
   };
   AUTH.session = s;
-  saveSession(s);
+  /* 後端模式不寫 localStorage：登入狀態一律由 /api/me 決定，
+     避免有人改本機狀態就變成「已登入」（v9 純前端模式的弱點）。 */
+  if(!AUTH_CFG.backendUrl) saveSession(s);
   applyAuthUI();
   unlockApp();
   clearAuthMsg();
@@ -3647,8 +3707,10 @@ function signIn(profile, mode){
 }
 
 function doSignOut(){
+  const wasBackend = !!AUTH_CFG.backendUrl;
   clearSession();
   AUTH.session = null;
+  if(wasBackend) backendLogout();
   applyAuthUI();
   const dc = $("demo-chooser");
   if(dc) dc.hidden = true;
@@ -3738,9 +3800,110 @@ function decodeJwt(jwt){
   return JSON.parse(json);
 }
 
-function onGoogleCredential(resp){
+/* ---------- 後端模式輔助 ---------- */
+function backendBase(){
+  return String(AUTH_CFG.backendUrl || "").trim().replace(/\/+$/, "");
+}
+
+const BACKEND_ERROR_TEXT = {
+  missing_credential:      "前端沒有送出 credential，請重試。",
+  malformed_token:         "憑證格式不正確，請重新登入。",
+  unsupported_alg:         "憑證的簽章演算法不受信任，已拒絕。",
+  unknown_kid:             "憑證的簽章金鑰無法識別，已拒絕。",
+  bad_signature:           "憑證簽章驗證失敗（可能被篡改），已拒絕。",
+  token_expired:           "憑證已過期，請重新登入。",
+  token_not_yet_valid:     "憑證時間異常（簽發時間在未來），已拒絕。",
+  wrong_issuer:            "憑證不是由 Google 簽發，已拒絕。",
+  wrong_audience:          "憑證不是簽給本網站的，已拒絕。",
+  missing_sub:             "憑證缺少使用者識別碼，請重新登入。",
+  missing_email:           "此 Google 帳戶沒有提供電子郵件，無法登入。",
+  email_unverified:        "此 Google 帳戶的電子郵件尚未驗證，請先至 Google 帳戶完成驗證。",
+  too_many_requests:       "嘗試过于頻繁，請稍等一分鐘再試。",
+  jwks_unavailable:        "伺服器暫時無法取得 Google 公鑰，請稍後再試。",
+  server_misconfigured:    "伺服器尚未完成設定（缺少 Client ID），請聯絡管理者。",
+  not_authenticated:       "尚未登入。",
+  internal_error:          "伺服器處理登入時發生錯誤，請稍後再試。"
+};
+
+function authBackendError(j){
+  const code = (j && j.error) || "";
+  return BACKEND_ERROR_TEXT[code] || (j && j.message) || "登入失敗，請重試。";
+}
+
+/** 以 cookie 向後端確認目前登入者；後端是唯一可信來源 */
+async function fetchBackendMe(){
+  if(!AUTH_CFG.backendUrl) return null;
   try{
-    const p = decodeJwt(resp && resp.credential);
+    const r = await fetch(backendBase() + "/api/me", {
+      method: "GET",
+      credentials: "include",          /* ← 必須：才會帶上 HttpOnly cookie */
+      headers: { "Accept": "application/json" }
+    });
+    if(!r.ok) return null;
+    const j = await r.json();
+    if(!j || !j.ok || !j.user) return null;
+    return {
+      name: j.user.name || String(j.user.email || "").split("@")[0],
+      email: j.user.email || "",
+      picture: j.user.picture || "",
+      sub: j.user.sub || "",
+      mode: "backend",
+      issuedAt: Date.now(),
+      expiresAt: Date.now() + AUTH_CFG.sessionDays * 86400000
+    };
+  }catch(e){
+    return null;
+  }
+}
+
+function backendLogout(){
+  if(!AUTH_CFG.backendUrl) return;
+  try{
+    fetch(backendBase() + "/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Accept": "application/json" }
+    }).catch(()=>{ /* 離線時忽略：本機狀態已清除 */ });
+  }catch(e){ /* 忽略 */ }
+}
+
+function onGoogleCredential(resp){
+  const credential = resp && resp.credential;
+
+  /* ── 後端模式：把 credential 送給伺服器，由伺服器驗簽章 ── */
+  if(AUTH_CFG.backendUrl){
+    if(!credential){
+      showAuthMsg("Google 未回傳憑證，請重試。", "err");
+      return;
+    }
+    showAuthMsg("正在由伺服器驗證身分…", "info");
+    fetch(backendBase() + "/api/auth/google", {
+      method: "POST",
+      credentials: "include",          /* ← 必須：才會接收 HttpOnly cookie */
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ credential: credential })
+    })
+      .then(async r => {
+        let j = null;
+        try{ j = await r.json(); }catch(e){ /* 非 JSON 回應 */ }
+        if(!r.ok || !j || !j.ok){
+          showAuthMsg(authBackendError(j), "err");
+          return;
+        }
+        signIn({
+          name: j.user.name,
+          email: j.user.email,
+          picture: j.user.picture,
+          sub: j.user.sub
+        }, "backend");
+      })
+      .catch(e => showAuthMsg("無法連線登入後端：" + e.message, "err"));
+    return;
+  }
+
+  /* ── 前端解碼模式（未設後端時的展示用）── */
+  try{
+    const p = decodeJwt(credential);
     if(!p || !p.email){
       showAuthMsg("Google 回傳的憑證無法解析，請重試。", "err");
       return;
@@ -3794,18 +3957,66 @@ function loadGis(){
   document.head.appendChild(sc);
 }
 
+/* 設定就緒檢查表：顯示 AUTH_CFG 兩個必要值的填入狀態 */
+function renderCfgCheck(){
+  const cid = String(AUTH_CFG.googleClientId || "").trim();
+  const be  = String(AUTH_CFG.backendUrl || "").trim();
+  const items = [
+    { key: "clientid", ok: !!cid, val: cid || "尚未填入 AUTH_CFG.googleClientId" },
+    { key: "backend",  ok: !!be,  val: be  || "尚未填入 AUTH_CFG.backendUrl" }
+  ];
+  let okCount = 0;
+  items.forEach(function(it){
+    if(it.ok) okCount++;
+    const li = document.querySelector('.cfg-check .ck[data-ck="' + it.key + '"]');
+    if(li){
+      li.classList.toggle("ok", it.ok);
+      li.classList.toggle("no", !it.ok);
+    }
+    const v = $("ck-" + it.key + "-val");
+    if(v) v.textContent = it.val;
+  });
+  const sum = $("cfg-check-sum");
+  if(sum){
+    if(okCount === 2){
+      sum.textContent = "2 / 2 · 真實簽章驗證就緒";
+      sum.classList.add("ok");
+    }else{
+      sum.textContent = okCount + " / 2 · 尚缺 " + (2 - okCount) + " 項";
+      sum.classList.remove("ok");
+    }
+  }
+  const box = $("cfg-check");
+  if(box) box.setAttribute("aria-label", "啟用真實簽章驗證所需設定，已完成 " + okCount + " / 2 項（用戶端 ID=" + (cid ? "已填" : "未填") + "，後端網址=" + (be ? "已填" : "未填") + "）");
+}
+
 /* ---------- 啟動 ---------- */
-function bootAuth(){
-  AUTH.mode = String(AUTH_CFG.googleClientId || "").trim() ? "google" : "demo";
+async function bootAuth(){
+  const hasClientId = !!String(AUTH_CFG.googleClientId || "").trim();
+  const hasBackend  = !!String(AUTH_CFG.backendUrl || "").trim();
+
+  /* 三種模式：
+     backend —— 有後端網址 + Client ID（唯一具備真正存取控制的模式）
+     google  —— 只有 Client ID，憑證在前端解碼（展示用）
+     demo    —— 什麼都沒設，自繪登入流程（展示用） */
+  AUTH.mode = (hasBackend && hasClientId) ? "backend" : (hasClientId ? "google" : "demo");
 
   const gBtn = $("google-signin"), slot = $("gsi-btn-slot");
   const note = $("auth-mode-note"), modeTxt = $("auth-mode-txt");
 
-  if(AUTH.mode === "google"){
+  if(AUTH.mode === "backend"){
     if(gBtn) gBtn.hidden = true;
     if(slot) slot.hidden = false;
-    if(modeTxt) modeTxt.textContent = "真實 Google 登入（Google Identity Services）";
-    if(note) note.innerHTML = "已設定用戶端 ID，使用 <b>Google 官方登入</b>。憑證僅在本頁解碼顯示，未經後端驗證簽章。";
+    if(modeTxt) modeTxt.textContent = "後端驗證模式（Google 登入 + 伺服器驗簽章）";
+    if($("auth-foot-backend")) $("auth-foot-backend").hidden = false;
+    if(note) note.innerHTML = "已設定登入後端 <code>" + backendBase() +
+      "</code>：Google 回傳的 credential 會送到伺服器，用 <b>Google 公鑰驗證簽章、aud、iss、exp</b>，再以 <b>HttpOnly cookie</b> 建立 session。前端無法自行偽造登入狀態。";
+    loadGis();
+  }else if(AUTH.mode === "google"){
+    if(gBtn) gBtn.hidden = true;
+    if(slot) slot.hidden = false;
+    if(modeTxt) modeTxt.textContent = "真實 Google 登入（前端解碼，未經後端驗簽章）";
+    if(note) note.innerHTML = "已設定用戶端 ID，使用 <b>Google 官方登入</b>。憑證僅在本頁解碼顯示，<b>未經後端驗證簽章</b>；若要真正的存取控制，請設定 <code>AUTH_CFG.backendUrl</code>。";
     loadGis();
   }else{
     if(gBtn) gBtn.hidden = false;
@@ -3813,6 +4024,9 @@ function bootAuth(){
     if(modeTxt) modeTxt.textContent = "示範登入流程（尚未設定 Google 用戶端 ID）";
     if(note) note.innerHTML = "尚未設定 <b>Google OAuth 用戶端 ID</b>，目前使用<b>可運作的示範登入流程</b>：不連線 Google、不送出任何資料、不進行真實身分驗證。設定方式見下方說明。";
   }
+
+  /* v11：設定就緒檢查表（顯示還缺哪幾個值） */
+  renderCfgCheck();
 
   /* 事件綁定 */
   if(gBtn) gBtn.addEventListener("click", ()=>openChooser());
@@ -3842,6 +4056,8 @@ function bootAuth(){
 
   /* 跨分頁同步登入／登出 */
   window.addEventListener("storage", ev=>{
+    /* 後端模式的登入狀態由伺服器決定，不跟 localStorage 同步（否則可被改本機狀態解鎖） */
+    if(AUTH_CFG.backendUrl) return;
     if(!ev || ev.key !== AUTH_CFG.storageKey || !AUTH.ready) return;
     const s = loadSession();
     if(s){
@@ -3856,8 +4072,14 @@ function bootAuth(){
     }
   });
 
-  /* 還原既有登入狀態 */
-  const s = loadSession();
+  /* 還原既有登入狀態（後端模式一律以 /api/me 為準，不信任本機狀態） */
+  let s = null;
+  if(AUTH_CFG.backendUrl){
+    s = await fetchBackendMe();
+  }else{
+    s = loadSession();
+  }
+
   if(s){
     AUTH.session = s;
     applyAuthUI();
